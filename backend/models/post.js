@@ -14,6 +14,7 @@ const postSchema = new mongoose.Schema({
     readTime: { type: Number, required: true },
     tags: [{ type: String }],
     createdAt: { type: Date, default: Date.now },
-});
+}
+);
 
 module.exports = mongoose.model("Post", postSchema);
