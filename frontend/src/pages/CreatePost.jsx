@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft } from 'lucide-react';
+// import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Pencil, Hash, Book, FileText, Layout } from 'lucide-react';
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -42,9 +43,9 @@ const CreatePost = () => {
       console.error('Error creating post:', error);
     }
   };
-
+{/* <div className="min-h-screen bg-gradient-to-br from-gray-800 via-blue-900 to-gray-900"></div> */}
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-950 text-white py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-890 to-blue-950 text-white py-8">
       <div className="container mx-auto px-4 max-w-4xl">
         <button 
           onClick={() => navigate('/posts')}
@@ -59,7 +60,10 @@ const CreatePost = () => {
           
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Title</label>
+              <label className="flex items-center space-x-2 text-sm font-medium text-gray-400 mb-2">
+                <Layout className="w-4 h-4" />
+                <span>Title</span>
+              </label>
               <input 
                 value={newPost.title}
                 onChange={(e) => setNewPost({...newPost, title: e.target.value})}
@@ -69,7 +73,10 @@ const CreatePost = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Excerpt</label>
+              <label className="flex items-center space-x-2 text-sm font-medium text-gray-400 mb-2">
+                <FileText className="w-4 h-4" />
+                <span>Excerpt</span>
+              </label>
               <textarea 
                 value={newPost.excerpt}
                 onChange={(e) => setNewPost({...newPost, excerpt: e.target.value})}
@@ -79,7 +86,10 @@ const CreatePost = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Content</label>
+              <label className="flex items-center space-x-2 text-sm font-medium text-gray-400 mb-2">
+                <Book className="w-4 h-4" />
+                <span>Content</span>
+              </label>              
               <textarea 
                 value={newPost.content}
                 onChange={(e) => setNewPost({...newPost, content: e.target.value})}
@@ -90,7 +100,10 @@ const CreatePost = () => {
 
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Category</label>
+              <label className="flex items-center space-x-2 text-sm font-medium text-gray-400 mb-2">
+              <Layout className="w-4 h-4" />
+              <span>Category</span>
+              </label>                
                 <input 
                   value={newPost.category}
                   onChange={(e) => setNewPost({...newPost, category: e.target.value})}
@@ -98,9 +111,11 @@ const CreatePost = () => {
                   placeholder="e.g., Technology"
                 />
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Tags</label>
+              <label className="flex items-center space-x-2 text-sm font-medium text-gray-400 mb-2">
+                <Hash className="w-4 h-4" />
+                <span>Tags</span>
+              </label>
                 <input 
                   value={typeof newPost.tags === 'string' ? newPost.tags : newPost.tags.join(', ')}
                   onChange={(e) => setNewPost({...newPost, tags: e.target.value})}

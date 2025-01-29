@@ -33,7 +33,7 @@ const AllPost = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-950 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-890 to-blue-950 text-white">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <header className="flex justify-between items-center mb-12">

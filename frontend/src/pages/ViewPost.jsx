@@ -48,7 +48,7 @@ const ViewPost = () => {
   if (!post) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-950 text-white py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-890 to-blue-950 text-white py-8">
       <div className="container mx-auto px-4 max-w-4xl">
         <button 
           onClick={() => navigate('/posts')}

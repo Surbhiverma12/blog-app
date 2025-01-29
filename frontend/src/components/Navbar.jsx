@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { LogIn, UserPlus, Home, BookOpen, Compass, PenSquare } from 'lucide-react';
 import AuthModal from './AuthModal';
 
 const Navbar = () => {
@@ -7,57 +8,71 @@ const Navbar = () => {
   const [authType, setAuthType] = useState('login');
   const navigate = useNavigate();
 
-  // Function to handle modal state and type
   const handleAuthClick = (type) => {
     setAuthType(type);
     setIsAuthModalOpen(true);
   };
 
-  // Function to handle modal close
   const handleModalClose = (newType) => {
     if (newType) {
-      // If a new type is provided, switch the modal type
       setAuthType(newType);
     } else {
-      // Otherwise, close the modal
       setIsAuthModalOpen(false);
     }
   };
 
   return (
     <>
-      <nav className={`fixed w-full bg-gray-900 bg-opacity-80 backdrop-blur-md z-40 
-        ${isAuthModalOpen ? 'filter blur-sm' : ''}`}>
-        <div className="container mx-auto flex justify-between items-center px-4 py-4">
-          {/* Logo */}
-          <div 
-            className="text-2xl font-bold text-blue-100 cursor-pointer" 
-            onClick={() => navigate('/')}
-          >
-            BlogSpot
-          </div>
+      <nav className={`fixed w-full bg-gray-900/75 backdrop-blur-md z-40 border-b border-gray-800/50 ${
+        isAuthModalOpen ? 'filter blur-sm' : ''
+      }`}>
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            {/* Logo Section */}
+            <div 
+              className="flex items-center space-x-2 cursor-pointer group"
+              onClick={() => navigate('/')}
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center transform group-hover:rotate-6 transition-transform">
+                <span className="text-white font-bold text-xl">B</span>
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-200 to-blue-400 bg-clip-text text-transparent">
+                BlogSpot
+              </span>
+            </div>
 
-          {/* Authentication Buttons */}
-          <div className="flex space-x-4">
-            <button 
-              onClick={() => handleAuthClick('login')}
-              className="bg-transparent border border-blue-500 text-blue-300 px-4 py-2 rounded-lg hover:bg-blue-900 transition-colors"
-            >
-              Login
-            </button>
-            <button 
-              onClick={() => handleAuthClick('signup')}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Sign Up
-            </button>
+            {/* Navigation Links */}
+            <div className="hidden md:flex items-center space-x-6">
+              <NavLink icon={<Home size={18} />} text="Home" onClick={() => navigate('/')} />
+              <NavLink icon={<BookOpen size={18} />} text="Posts" onClick={() => navigate('/posts')} />
+              <NavLink icon={<Compass size={18} />} text="Explore" onClick={() => navigate('/explore')} />
+              <NavLink icon={<PenSquare size={18} />} text="Write" onClick={() => navigate('/posts/create')} />
+            </div>
+
+            {/* Auth Buttons */}
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => handleAuthClick('login')}
+                className="flex items-center space-x-2 px-4 py-2 text-blue-300 hover:text-blue-200 transition-colors"
+              >
+                <LogIn size={18} />
+                <span>Login</span>
+              </button>
+              <button
+                onClick={() => handleAuthClick('signup')}
+                className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-100 shadow-lg hover:shadow-blue-600/25"
+              >
+                <UserPlus size={18} />
+                <span>Sign Up</span>
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
       {/* Auth Modal */}
       {isAuthModalOpen && (
-        <AuthModal 
+        <AuthModal
           isOpen={isAuthModalOpen}
           onClose={handleModalClose}
           type={authType}
@@ -66,5 +81,18 @@ const Navbar = () => {
     </>
   );
 };
+
+// Helper component for nav links
+const NavLink = ({ icon, text, onClick }) => (
+  <button
+    onClick={onClick}
+    className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors group"
+  >
+    <span className="transform group-hover:scale-110 transition-transform">
+      {icon}
+    </span>
+    <span>{text}</span>
+  </button>
+);
 
 export default Navbar;
