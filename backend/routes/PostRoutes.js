@@ -1,6 +1,6 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
-const Post = require("../models/Post");
+const Post = require("../models/Post.js");
 const router = express.Router();
 
 // Create a new post
