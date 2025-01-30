@@ -12,7 +12,8 @@ connectDB(); // Connect to MongoDB
 const app = express();
 
 // Middleware
-app.use(cors());
+const cors = require('cors');
+app.use(cors({ origin: 'https://blog-app-fd-two.vercel.app/' }));
 app.use(bodyParser.json());
 
 app.use("/api/posts", postRoutes);
