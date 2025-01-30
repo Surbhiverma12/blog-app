@@ -1,4 +1,4 @@
-const Post = require('../models/post');
+const Post = require('../models/Post.js');
 
 exports.createPost = async (req, res) => {
     console.log('POST /api/posts called');
