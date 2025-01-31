@@ -6,9 +6,9 @@ const BlogHeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-black text-white">
+    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-950 to-black text-white">
       {/* Hero Content */}
-      <div className="container mx-auto px-4 min-h-screen flex items-center pt-10">
+      <div className="container mx-auto px-4 min-h-screen flex items-center">
         <div className="grid md:grid-cols-2 gap-12 items-center py-12">
           {/* Text Content */}
           <div className="space-y-8 relative z-10">

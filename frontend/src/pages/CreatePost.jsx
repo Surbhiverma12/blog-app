@@ -45,7 +45,7 @@ const CreatePost = () => {
   };
 {/* <div className="min-h-screen bg-gradient-to-br from-gray-800 via-blue-900 to-gray-900"></div> */}
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-890 to-blue-950 text-white py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-950 text-white py-8">
       <div className="container mx-auto px-4 max-w-4xl">
         <button 
           onClick={() => navigate('/posts')}
