@@ -1,33 +1,60 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext.jsx'; // Import the auth context
+import toast from 'react-hot-toast';
+import Loader from './Loader';
 
 const AuthModal = ({ isOpen, onClose, type }) => {
+  const { user, login} = useAuth(); // Use the auth context
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
+    username: '',
     email: '',
     password: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted', formData);
-    
-    // You can add your authentication logic here
-    // For example:
-    if (type === 'login') {
-      // Handle login
-      console.log('Logging in with:', formData.email, formData.password);
-    } else {
-      // Handle signup
-      console.log('Signing up with:', formData);
+    setLoading(true);
+    setError('');
+
+    try {
+      if (type === 'login') {
+        const response = await axios.post(`${import.meta.env.VITE_MAP_API_URL}/api/auth/login`, {
+          email: formData.email,
+          password: formData.password,
+        });
+        login(response.data); // Use the login function from context
+        toast.success(`Welcome, ${user?.name || 'User'}! ${response.data.message}`, { position: "top-right" }); 
+        onClose(); // Close the modal after successful login
+      } else {
+        const response = await axios.post(`${import.meta.env.VITE_MAP_API_URL}/api/auth/signup`, {
+          username: formData.username,
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        });
+        login(response.data); // Log the user in after successful signup
+        toast.success(`Welcome, ${user?.name || 'User'}! ${response.data.message}`, { position: "top-right" })
+        onClose(); // Close the modal
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred during the request.');
+      toast.error(error.response?.data?.message || "Something went wrong!", { position: "top-right" });
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -35,13 +62,16 @@ const AuthModal = ({ isOpen, onClose, type }) => {
   const toggleAuthType = () => {
     // Clear form data when switching
     setFormData({
-      fullName: '',
+      name: '',
+      username: '',
       email: '',
-      password: ''
+      password: '',
     });
     // Call onClose with the new type to switch
     onClose(type === 'login' ? 'signup' : 'login');
   };
+
+  if (loading) return <Loader />;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
@@ -59,15 +89,33 @@ const AuthModal = ({ isOpen, onClose, type }) => {
           {type === 'login' ? 'Welcome Back' : 'Create Account'}
         </h2>
 
+        {/* Error Message */}
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {type === 'signup' && (
+            <div>
+              <label className="block text-gray-700 mb-2">Username</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Enter your username"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+          )}
+
           {type === 'signup' && (
             <div>
               <label className="block text-gray-700 mb-2">Full Name</label>
               <input
                 type="text"
-                name="fullName"
-                value={formData.fullName}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your full name"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -104,9 +152,10 @@ const AuthModal = ({ isOpen, onClose, type }) => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors mt-6"
+            className={`w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors mt-6 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={loading}
           >
-            {type === 'login' ? 'Log In' : 'Create Account'}
+            {loading ? 'Processing...' : type === 'login' ? 'Log In' : 'Create Account'}
           </button>
 
           {/* Toggle between login and signup */}

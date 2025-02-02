@@ -4,11 +4,7 @@ const postSchema = new mongoose.Schema({
     title: { type: String, required: true },
     excerpt: { type: String, required: true },
     content: { type: String, required: true },
-    author: {
-        name: { type: String, required: true },
-        username: { type: String, required: true },  // Ensuring username is unique
-        avatar: { type: String, required: true },  // Placeholder URL for avatar
-    },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     category: { type: String, required: true },
     publishedAt: { type: Date, required: true },
     readTime: { type: Number, required: true },

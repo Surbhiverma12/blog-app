@@ -26,7 +26,7 @@ const ViewPost = () => {
 
   const handleEdit = async () => {
     try {
-      const response = await axios.put(`https://blog-app-api-c2yw.onrender.com/api/posts/${id}`, editedPost);
+      const response = await axios.put(`${import.meta.env.VITE_MAP_API_URL}/api/posts/${id}`, editedPost);
       setPost(response.data);
       setIsEditing(false);
     } catch (error) {
@@ -37,7 +37,7 @@ const ViewPost = () => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       try {
-        await axios.delete(`https://blog-app-api-c2yw.onrender.com/api/posts/${id}`);
+        await axios.delete(`${import.meta.env.VITE_MAP_API_URL}/api/posts/${id}`);
         navigate('/posts');
       } catch (error) {
         console.error('Error deleting post:', error);

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, UserPlus, Home, BookOpen, Compass, PenSquare } from 'lucide-react';
+import { LogIn, UserPlus, Home, BookOpen, Compass, PenSquare, LogOut } from 'lucide-react';
 import AuthModal from './AuthModal';
+import { useAuth } from '../context/AuthContext.jsx'; // Import the auth context
 
 const Navbar = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authType, setAuthType] = useState('login');
   const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth(); // Use the auth context
 
   const handleAuthClick = (type) => {
     setAuthType(type);
@@ -21,13 +23,18 @@ const Navbar = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <>
-      <nav className= "fixed w-full bg-gray-900/75 backdrop-blur-md z-40 border-b border-gray-800/50">
+      <nav className="fixed w-full bg-gray-900/75 backdrop-blur-md z-40 border-b border-gray-800/50">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             {/* Logo Section */}
-            <div 
+            <div
               className="flex items-center space-x-2 cursor-pointer group"
               onClick={() => navigate('/')}
             >
@@ -44,25 +51,42 @@ const Navbar = () => {
               <NavLink icon={<Home size={18} />} text="Home" onClick={() => navigate('/')} />
               <NavLink icon={<BookOpen size={18} />} text="Posts" onClick={() => navigate('/posts')} />
               <NavLink icon={<Compass size={18} />} text="Explore" onClick={() => navigate('/explore')} />
-              <NavLink icon={<PenSquare size={18} />} text="Write" onClick={() => navigate('/posts/create')} />
+              {isAuthenticated && (
+                <NavLink icon={<PenSquare size={18} />} text="Write" onClick={() => navigate('/posts/create')} />
+              )}
             </div>
 
             {/* Auth Buttons */}
             <div className="flex items-center space-x-3">
-              <button
-                onClick={() => handleAuthClick('login')}
-                className="flex items-center space-x-2 px-4 py-2 text-blue-300 hover:text-blue-200 transition-colors"
-              >
-                <LogIn size={18} />
-                <span>Login</span>
-              </button>
-              <button
-                onClick={() => handleAuthClick('signup')}
-                className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-100 shadow-lg hover:shadow-blue-600/25"
-              >
-                <UserPlus size={18} />
-                <span>Sign Up</span>
-              </button>
+              {!isAuthenticated ? (
+                <>
+                  <button
+                    onClick={() => handleAuthClick('login')}
+                    className="flex items-center space-x-2 px-4 py-2 text-blue-300 hover:text-blue-200 transition-colors"
+                  >
+                    <LogIn size={18} />
+                    <span>Login</span>
+                  </button>
+                  <button
+                    onClick={() => handleAuthClick('signup')}
+                    className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-100 shadow-lg hover:shadow-blue-600/25"
+                  >
+                    <UserPlus size={18} />
+                    <span>Sign Up</span>
+                  </button>
+                </>
+              ) : (
+                <div className="flex items-center space-x-4">
+                  <span className="text-blue-300">Welcome, {user?.name || 'User'}</span>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center space-x-2 px-4 py-2 text-red-300 hover:text-red-200 transition-colors"
+                  >
+                    <LogOut size={18} />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

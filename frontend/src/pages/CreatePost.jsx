@@ -37,7 +37,7 @@ const CreatePost = () => {
 
     try {
       console.log(post)
-      const response = await axios.post('https://blog-app-api-c2yw.onrender.com/api/posts', post);
+      const response = await axios.post(`${import.meta.env.VITE_MAP_API_URL}/api/posts`, post);
       navigate('/posts');
     } catch (error) {
       console.error('Error creating post:', error);

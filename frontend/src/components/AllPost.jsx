@@ -2,28 +2,27 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { PenTool, BookOpen, Plus, Filter, Tag, User, Clock } from 'lucide-react';
+import toast from 'react-hot-toast';
+import Loader from './Loader';
 
 const AllPost = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
-  const [isCreatingPost, setIsCreatingPost] = useState(false);
-  const [newPost, setNewPost] = useState({
-    title: "",
-    excerpt: "",
-    content: "",
-    category: "",
-    tags: []
-  });
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get('https://blog-app-api-c2yw.onrender.com/api/posts');
+        setLoading(true);
+        const res = await axios.get(`${import.meta.env.VITE_MAP_API_URL}/api/posts`);
         setPosts(res.data);
         console.log(res.data)
       } catch (err) {
-        console.error(err);
-      }
+        console.error('Error fetching posts:', err);
+    } finally {
+      setLoading(false);
+    }
     };
     fetchPosts();
   }, []);
@@ -31,6 +30,9 @@ const AllPost = () => {
   const handleCardClick = (post) => {
     navigate(`/posts/${post._id}`);
   };
+
+  
+  if (loading) return <Loader />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-950 text-white">
