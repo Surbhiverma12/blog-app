@@ -26,24 +26,25 @@ const CreatePost = () => {
     const post = {
       ...newPost,
       tags: tagsArray,
-      author: {
-        name: "Current User",
-        username: "blogger",
-        avatar: "/api/placeholder/50/50"
-      },
       publishedAt: new Date().toISOString(),
       readTime: readTime
     };
 
     try {
       console.log(post)
-      const response = await axios.post(`${import.meta.env.VITE_MAP_API_URL}/api/posts`, post);
+      const token = localStorage.getItem('token')
+      console.log("Token : ", token)
+      const response = await axios.post(`${import.meta.env.VITE_MAP_API_URL}/api/posts`, post, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       navigate('/posts');
     } catch (error) {
       console.error('Error creating post:', error);
     }
   };
-{/* <div className="min-h-screen bg-gradient-to-br from-gray-800 via-blue-900 to-gray-900"></div> */}
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-950 text-white py-8">
       <div className="container mx-auto px-4 max-w-4xl">

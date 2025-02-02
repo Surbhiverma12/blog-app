@@ -4,7 +4,7 @@ const router = express.Router();
 const { createPost, getAllPosts, getPostById, updatePost, deletePost } = require('../controllers/postcontrollers.js')
 
 // Create a new post
-router.post("/", createPost);
+router.post("/", authMiddleware, createPost);
 
 // Get all posts
 router.get("/", getAllPosts);

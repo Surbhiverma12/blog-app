@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import Loader from './Loader';
 
 const AuthModal = ({ isOpen, onClose, type }) => {
-  const { user, login} = useAuth(); // Use the auth context
+  const { login, user} = useAuth(); 
   const [formData, setFormData] = useState({
     name: '',
     username: '',
@@ -35,9 +35,12 @@ const AuthModal = ({ isOpen, onClose, type }) => {
           email: formData.email,
           password: formData.password,
         });
-        login(response.data); // Use the login function from context
+        
+        login(response.data);
+        console.log(user)
+        console.log(response.data)
         toast.success(`Welcome, ${user?.name || 'User'}! ${response.data.message}`, { position: "top-right" }); 
-        onClose(); // Close the modal after successful login
+        onClose(); 
       } else {
         const response = await axios.post(`${import.meta.env.VITE_MAP_API_URL}/api/auth/signup`, {
           username: formData.username,
@@ -45,8 +48,9 @@ const AuthModal = ({ isOpen, onClose, type }) => {
           email: formData.email,
           password: formData.password,
         });
-        login(response.data); // Log the user in after successful signup
-        toast.success(`Welcome, ${user?.name || 'User'}! ${response.data.message}`, { position: "top-right" })
+        login(response.data); 
+        console.log(response.data)
+        toast.success(`Welcome, ${response.data.user.name || 'User'}! ${response.data.message}`, { position: "top-right" })
         onClose(); // Close the modal
       }
     } catch (err) {

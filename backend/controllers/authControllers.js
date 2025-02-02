@@ -2,23 +2,19 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";  // Use dotenv for security
+const JWT_SECRET = process.env.JWT_SECRET;  
 
 // **Signup User**
 exports.signup = async (req, res) => {
     try {
         const { name, username, email, password } = req.body;
         console.log(req.body)
-        // Check if user already exists by email or username
+
         const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
             return res.status(400).json({ message: "User with this email or username already exists" });
         }
 
-        // Hash the password before saving
-        // const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create a new user
         const newUser = new User({
             name,
             username,
@@ -27,10 +23,10 @@ exports.signup = async (req, res) => {
         });
 
         // Save the new user to the database
-        await newUser.save();
+        const user = await newUser.save();
+        console.log(user)
 
-        // Respond with success message
-        res.status(201).json({ message: `${name} You are registered successfully` });
+        res.status(200).json({ message: `You are registered successfully`, user });
 
     } catch (error) {
         console.error(error);

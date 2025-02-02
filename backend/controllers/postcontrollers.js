@@ -5,13 +5,20 @@ exports.createPost = async (req, res) => {
     try {
         const { title, excerpt, content, category, publishedAt, readTime, tags } = req.body;
 
+        console.log(req.body)
         if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+        const author = {
+            name: req.user.name,
+            username: req.user.username,
+            _id: req.user._id
+        }
 
         const newPost = new Post({
             title,
             excerpt,
             content,
-            author: req.user._id,  // Save logged-in user as the author
+            author: author,  // Save logged-in user as the author
             category,
             publishedAt,
             readTime,
