@@ -6,19 +6,16 @@ exports.createPost = async (req, res) => {
         const { title, excerpt, content, category, publishedAt, readTime, tags } = req.body;
 
         console.log(req.body)
-        if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-
-        const author = {
-            name: req.user.name,
-            username: req.user.username,
-            _id: req.user._id
-        }
+        if (!req.user) return res.status(401).json({
+            success: false,
+            message: "Unauthorized" 
+            });
 
         const newPost = new Post({
             title,
             excerpt,
             content,
-            author: author,  // Save logged-in user as the author
+            author: req.user._id,  // Save logged-in user as the author
             category,
             publishedAt,
             readTime,
@@ -26,49 +23,127 @@ exports.createPost = async (req, res) => {
         });
 
         await newPost.save();
-        res.status(201).json({ message: "Post created successfully", post: newPost });
+
+        res.status(201).json({ 
+            success: true,
+            message: "Post created successfully", 
+            post: newPost, 
+        });
+
     } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+        res.status(500).json({ 
+            success: false,
+            message: "Server error", 
+            error, 
+        });
     }
 };
 
 exports.getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find();
-        console.log(posts)
+
+        const posts = await Post.find().populate("author", "username name");;
         res.status(200).json(posts);
+
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ 
+            success: false,
+            message: "Server error", 
+            err, 
+        });
     }
 }
 
 exports.getPostById =  async (req, res) => {
     try {
-        console.log("get called")
-        const post = await Post.findById(req.params.id);
-        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        const post = await Post.findById(req.params.id).populate("author", "username name");
+
+        if (!post) return res.status(404).json({
+            success: true,
+            message: "Post not found"
+        });
+
         res.status(200).json(post);
+
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ 
+            success: false,
+            message: "Server error", 
+            err, 
+        });
     }
 };
 
 exports.updatePost = async (req, res) => {
     try {
-        const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body,
-      { new: true }
-    );
+        const postId = req.params.id;
+        const userId = req.user.id;
+
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+          }
+      
+          if (post.author.toString() !== userId) {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized to edit this post" 
+            });
+          }
+      
+          const updatedPost = await Post.findByIdAndUpdate(postId, req.body, {
+            new: true,
+          }).populate("author", "username name");
+
         res.status(200).json(updatedPost);
+
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({
+            success: false,
+            message: "Server error", 
+            err,
+        });
     }
 };
 
 exports.deletePost = async (req, res) => {
     try {
+        const postId = req.params.id;
+        const userId = req.user.id;
+
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+          }
+      
+          if (post.author.toString() !== userId) {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized to delete this post" 
+            });
+          }
+      
         await Post.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: "Post deleted successfully" });
+
+        res.status(200).json({ 
+            success: true,
+            message: "Post deleted successfully" 
+        });
+
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ 
+            success: false,
+            message: "Server error",
+            err,
+        });
     }
 };

@@ -12,7 +12,7 @@ exports.signup = async (req, res) => {
 
         const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
-            return res.status(400).json({ message: "User with this email or username already exists" });
+            return res.status(400).json({success:false, message: "User with this email or username already exists" });
         }
 
         const newUser = new User({
@@ -26,11 +26,19 @@ exports.signup = async (req, res) => {
         const user = await newUser.save();
         console.log(user)
 
-        res.status(200).json({ message: `You are registered successfully`, user });
+        res.status(200).json({ 
+            success: true,
+            message: `You are registered successfully`, 
+            user: {name: name,
+            username: username},
+        });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Server error", error: error.message });
+        res.status(500).json({
+            success: false,
+            message: "Server error", error: error.message 
+        });
     }
 };
 
@@ -50,11 +58,15 @@ exports.login = async (req, res) => {
         const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
 
         res.status(200).json({
+            success: true,
             message: "Login successful",
             token,
             user: { name: user.name, email: user.email }
         });
     } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+        res.status(500).json({
+            success: false,
+            message: "Server error", error: error.message 
+            });
     }
 };

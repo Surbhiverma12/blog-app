@@ -9,13 +9,13 @@ router.post("/", authMiddleware, createPost);
 // Get all posts
 router.get("/", getAllPosts);
 
-// Get a single post by ID
+// Get a single post
 router.get("/:id", getPostById);
 
-// Update a post by ID
-router.put("/:id", updatePost);
+// Update a post 
+router.put("/:id", authMiddleware, updatePost);
 
-// Delete a post by ID
-router.delete("/:id", deletePost);
+// Delete a post 
+router.delete("/:id", authMiddleware, deletePost);
 
 module.exports = router;

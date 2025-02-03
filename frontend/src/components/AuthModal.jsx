@@ -39,7 +39,7 @@ const AuthModal = ({ isOpen, onClose, type }) => {
         login(response.data);
         console.log(user)
         console.log(response.data)
-        toast.success(`Welcome, ${user?.name || 'User'}! ${response.data.message}`, { position: "top-right" }); 
+        toast.success(`Welcome, ${response.data.user.name}! ${response.data.message}`, { position: "top-right" }); 
         onClose(); 
       } else {
         const response = await axios.post(`${import.meta.env.VITE_MAP_API_URL}/api/auth/signup`, {
@@ -50,7 +50,7 @@ const AuthModal = ({ isOpen, onClose, type }) => {
         });
         login(response.data); 
         console.log(response.data)
-        toast.success(`Welcome, ${response.data.user.name || 'User'}! ${response.data.message}`, { position: "top-right" })
+        toast.success(`Welcome, ${response.data.user.name}! ${response.data.message}`, { position: "top-right" })
         onClose(); // Close the modal
       }
     } catch (err) {

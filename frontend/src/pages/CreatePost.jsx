@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// import { ArrowLeft } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { ArrowLeft, Pencil, Hash, Book, FileText, Layout } from 'lucide-react';
 
 const CreatePost = () => {
@@ -31,6 +31,7 @@ const CreatePost = () => {
     };
 
     try {
+
       console.log(post)
       const token = localStorage.getItem('token')
       console.log("Token : ", token)
@@ -39,8 +40,13 @@ const CreatePost = () => {
           Authorization: `Bearer ${token}`
         }
       });
+
+      toast.success("Blog is Created succesfully", { position: "top-right" } )
       navigate('/posts');
-    } catch (error) {
+
+    } 
+    catch (error) {
+      toast.error(error.response.data.message, { position: "top-right" } )
       console.error('Error creating post:', error);
     }
   };

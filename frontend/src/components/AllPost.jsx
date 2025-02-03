@@ -14,13 +14,17 @@ const AllPost = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+
         setLoading(true);
         const res = await axios.get(`${import.meta.env.VITE_MAP_API_URL}/api/posts`);
         setPosts(res.data);
         console.log(res.data)
-      } catch (err) {
+
+      } 
+      catch (err) {
         console.error('Error fetching posts:', err);
-    } finally {
+    } 
+    finally {
       setLoading(false);
     }
     };

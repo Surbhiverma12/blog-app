@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, User, Clock, Edit, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import Loader from '../components/Loader';
 
 const ViewPost = () => {
   const { id } = useParams();
@@ -10,12 +12,21 @@ const ViewPost = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedPost, setEditedPost] = useState(null);
 
+  const [loading, setLoading] = useState(true);
+
+  const token = localStorage.getItem('token')
+  const user = localStorage.getItem('user')
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
+
+        setLoading(true)
         const response = await axios.get(`https://blog-app-api-c2yw.onrender.com/api/posts/${id}`);
         setPost(response.data);
         setEditedPost(response.data);
+        setLoading(false)
+
       } catch (error) {
         console.error('Error fetching post:', error);
       }
@@ -26,26 +37,47 @@ const ViewPost = () => {
 
   const handleEdit = async () => {
     try {
-      const response = await axios.put(`${import.meta.env.VITE_MAP_API_URL}/api/posts/${id}`, editedPost);
+      const response = await axios.put(`${import.meta.env.VITE_MAP_API_URL}/api/posts/${id}`, editedPost , {
+      headers: {
+        "Authorization": `Bearer ${token}`, 
+      },
+    });
+
       setPost(response.data);
+      console.log(response.data)
       setIsEditing(false);
+      toast.success("Blog is Updated succesfully", { position: "top-right" } )
+
     } catch (error) {
+      toast.error(error.response.data.message, { position: "top-right" } )
       console.error('Error updating post:', error);
     }
   };
 
   const handleDelete = async () => {
+
     if (window.confirm('Are you sure you want to delete this post?')) {
+
       try {
-        await axios.delete(`${import.meta.env.VITE_MAP_API_URL}/api/posts/${id}`);
+        await axios.delete(`${import.meta.env.VITE_MAP_API_URL}/api/posts/${id}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`, 
+          },
+        });
+
+        toast.success("Blog is Deleted succesfully", { position: "top-right" } )
         navigate('/posts');
-      } catch (error) {
+
+      }  
+      catch (error) {
+        toast.error(error.response.data.message, { position: "top-right" } )
         console.error('Error deleting post:', error);
       }
     }
   };
 
-  if (!post) return null;
+  // if (!post) return null;
+  if (loading) return <Loader />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-890 to-blue-950 text-white py-8">
@@ -92,7 +124,7 @@ const ViewPost = () => {
               </div>
             </div>
           ) : (
-            <>
+            <>      
               <div className="flex justify-between items-start mb-6">
                 <h1 className="text-3xl font-bold text-blue-300">{post.title}</h1>
                 <div className="flex space-x-2">
