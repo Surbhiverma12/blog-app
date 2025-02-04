@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { PenTool, BookOpen, Plus, Filter, Tag, User, Clock } from 'lucide-react';
-import toast from 'react-hot-toast';
 import Loader from './Loader';
 
 const AllPost = () => {

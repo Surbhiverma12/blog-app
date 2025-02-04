@@ -6,6 +6,7 @@ import AllPost from './components/AllPost';
 import ExplorePage from './components/ExplorePage';
 import CreatePost from './pages/CreatePost';
 import ViewPost from './pages/ViewPost';
+import EditPost from './pages/EditPost'
 import Navbar from './components/Navbar';
 import { AuthProvider } from './context/AuthContext.jsx';
 
@@ -15,17 +16,18 @@ function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-gradient-to-br from-gray-800 to-blue-900">
         <Navbar />
-        <main className="pt-16"> {/* Add padding-top to account for fixed navbar */}
+        <main className="pt-16"> 
           <Routes>
             <Route path="/" element={<BlogHeroSection />} />
             <Route path="/posts" element={<AllPost />} />
             <Route path="/posts/create" element={<CreatePost />} />
             <Route path="/posts/:id" element={<ViewPost />} />
+            <Route path="/edit-post/:id" element={<EditPost />} />
             <Route path="/explore" element={<ExplorePage />} />
           </Routes>
         </main>
-                  {/* Toast Container */}
-                  <Toaster
+
+        <Toaster
             position="top-right"
             toastOptions={{
               duration: 3000,

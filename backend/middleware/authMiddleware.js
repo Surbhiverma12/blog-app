@@ -14,6 +14,6 @@ exports.authMiddleware = async (req, res, next) => {
 
         next();
     } catch (error) {
-        res.status(401).json({ message: "Invalid token", error: error.message });
+        res.status(401).json({ message: "Invalid", error: error.message });
     }
 };

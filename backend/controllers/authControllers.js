@@ -8,7 +8,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 exports.signup = async (req, res) => {
     try {
         const { name, username, email, password } = req.body;
-        console.log(req.body)
 
         const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
@@ -22,7 +21,6 @@ exports.signup = async (req, res) => {
             password
         });
 
-        // Save the new user to the database
         const user = await newUser.save();
         console.log(user)
 
@@ -45,7 +43,6 @@ exports.signup = async (req, res) => {
 // **Login User**
 exports.login = async (req, res) => {
     try {
-        console.log(req.body)
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
