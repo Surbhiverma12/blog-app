@@ -42,7 +42,7 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     try {
 
-        const posts = await Post.find().populate("author", "username name");;
+        const posts = await Post.find().populate("author", "username name");
         res.status(200).json(posts);
 
     } catch (err) {

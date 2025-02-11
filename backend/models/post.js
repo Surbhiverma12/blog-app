@@ -10,6 +10,8 @@ const postSchema = new mongoose.Schema({
     readTime: { type: Number, required: true },
     tags: [{ type: String }],
     createdAt: { type: Date, default: Date.now },
+    views: { type: Number, default: 0 },
+    reviewCount: { type: Number, default: 0 },
 }
 );
 
