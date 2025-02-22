@@ -54,7 +54,7 @@ const AuthModal = ({ isOpen, onClose, type }) => {
         onClose(); // Close the modal
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred during the request.');
+      setError(err.response?.data?.message);
       toast.error(error.response?.data?.message || "Something went wrong!", { position: "top-right" });
       console.error(err);
     } finally {

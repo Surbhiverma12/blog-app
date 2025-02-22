@@ -57,7 +57,13 @@ exports.getAllPosts = async (req, res) => {
 exports.getPostById =  async (req, res) => {
     try {
 
-        const post = await Post.findById(req.params.id).populate("author", "username name");
+        const post = await Post.findByIdAndUpdate(
+            req.params.id,
+            { $inc: { views: 1 } }, 
+            { new: true }
+        )
+            .populate("author", "username name");
+            console.log(post)
 
         if (!post) return res.status(404).json({
             success: true,
