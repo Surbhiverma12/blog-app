@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { PenTool, BookOpen, Plus, Filter, Tag, User, Clock, Eye, MessageCircle, Calendar, Search } from 'lucide-react';
+import { useAuth } from '../context/AuthContext'; // ✅ Add this
+import AuthModal from './AuthModal';              // ✅ Import modal
+import {
+  PenTool, BookOpen, Plus, Filter, Tag, User,
+  Clock, Eye, MessageCircle, Calendar, Search
+} from 'lucide-react';
 import Loader from './Loader';
 
 const AllPost = () => {
   const navigate = useNavigate();
+  const { user } = useAuth(); // ✅ access user
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [visibleCount, setVisibleCount] = useState(4);
+
+  // ✅ Modal state
+  const [isAuthModalOpen, setAuthModalOpen] = useState(false);
+  const [authType, setAuthType] = useState('signup');
 
   const categories = ['All', 'Technology', 'Design', 'Development', 'Coding', 'Lifestyle'];
 
@@ -40,19 +51,31 @@ const AllPost = () => {
     });
   };
 
-  const filteredPosts = posts.filter(post => {
+  const sortedPosts = [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const filteredPosts = sortedPosts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+                          post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory.toLowerCase() === 'all' || 
-                           post.category?.toLowerCase() === selectedCategory.toLowerCase();
+                            post.category?.toLowerCase() === selectedCategory.toLowerCase();
     return matchesSearch && matchesCategory;
   });
+  const visiblePosts = filteredPosts.slice(0, visibleCount);
+
+  const handleCreateClick = () => {
+    if (user) {
+      navigate('/posts/create');
+    } else {
+      setAuthType('signup'); // or 'login'
+      setAuthModalOpen(true);
+    }
+  };
 
   if (loading) return <Loader />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-950 text-white">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
+
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
           <div>
@@ -60,7 +83,7 @@ const AllPost = () => {
             <p className="text-gray-400">Discover, Learn, and Share Knowledge</p>
           </div>
           <button 
-            onClick={() => navigate('/posts/create')}
+            onClick={handleCreateClick}
             className="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200 hover:shadow-lg"
           >
             <Plus className="w-5 h-5" />
@@ -68,7 +91,7 @@ const AllPost = () => {
           </button>
         </header>
 
-        {/* Search and Filter Bar */}
+        {/* Search and Filter */}
         <div className="bg-gray-800/50 rounded-xl p-4 mb-8 backdrop-blur-sm">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
@@ -101,7 +124,7 @@ const AllPost = () => {
 
         {/* Posts Grid */}
         <div className="grid md:grid-cols-2 gap-6">
-          {filteredPosts.map(post => (
+          {visiblePosts.map(post => (
             <div 
               key={post._id}
               onClick={() => handleCardClick(post)}
@@ -157,19 +180,31 @@ const AllPost = () => {
           ))}
         </div>
 
+        {/* Empty State */}
         {filteredPosts.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-400">No posts found matching your criteria</p>
           </div>
         )}
 
-        {filteredPosts.length > 0 && (
+        {/* Load More Button */}
+        {visibleCount < filteredPosts.length && (
           <div className="text-center mt-8">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg flex items-center space-x-2 mx-auto transition-all duration-200 hover:shadow-lg">
+            <button
+              onClick={() => setVisibleCount(prev => prev + 4)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg flex items-center space-x-2 mx-auto transition-all duration-200 hover:shadow-lg"
+            >
               <BookOpen className="w-5 h-5" />
               <span>Load More Posts</span>
             </button>
           </div>
+        )}
+       {isAuthModalOpen && (
+          <AuthModal
+            isOpen={isAuthModalOpen}
+            onClose={() => setAuthModalOpen(false)} 
+            type={authType}
+          />
         )}
       </div>
     </div>
